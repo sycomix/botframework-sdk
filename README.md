@@ -1,6 +1,6 @@
 # ![Bot Framework SDK](./docs/media/BotFrameworkSDK.png)
 
-### [Click here to find out what's new for //build2019!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
+### [Click here to find out what's new with Bot Framework!](https://github.com/Microsoft/botframework/blob/master/whats-new.md#whats-new)
 
 # Bot Framework SDK
 
@@ -12,7 +12,7 @@ The Bot Framework SDK v4 is an [open source SDK][1a] that enable developers to m
 
 |                |              C#              |                JavaScript                |         Python         | Java                    |
 |----------------|:----------------------------:|:----------------------------------------:|:----------------------:|:-----------------------:|
-| Stable Release |          [4.4.3][1]          |                [4.4.0][2]                | [4.4.0b1 (preview)][3] | [4.0.0a6 (preview)][3a] |
+| Stable Release |          [4.5.0][1]          |                [4.5.0][2]                | [4.5.0b2 (preview)][3] | [4.0.0a6 (preview)][3a] |
 | Samples        | [.NET Core][6], [WebAPI][10] | [Node.js][7] , [TypeScript][8], [es6][9] |      [Python][111]     |                         |
 | Docs           | [C# SDK Docs][5]             | [JavaScript SDK Docs][5]                 |                        |                         |
 | Samples        | [.NET Core][6], [WebAPI][10] | [Node.js][7] , [TypeScript][8], [es6][9] |      [Python][111]     |                         |
@@ -36,8 +36,8 @@ The Bot Framework SDK v4 is an [open source SDK][1a] that enable developers to m
 [111]:https://github.com/Microsoft/botbuilder-python/tree/master/samples
 
 <a name="V4-whats-new"></a>
-### Bot Framework SDK v4 - (New! - version 4.5 preview)
-The Bot Framework SDK v4 - Version 4.5 new capabilities in preview.
+### Bot Framework SDK v4 - (New! - version 4.6 preview)
+The Bot Framework SDK v4 - Version 4.6 new capabilities in preview.
 
 - [Adaptive Dialog][47] | [docs][48] | [C# samples][49] :: Adaptive Dialogs enable developers to build conversations that can be dynamically changed as the conversation progresses.  Traditionally developers have mapped out the entire flow of a conversation up front, which limits the flexibility of the conversation.  Adaptive dialogs allow them to be more flexible, to respond to changes in context and insert new steps or entire sub-dialogs into the conversation as it progresses. Additionally as with other SDK V4 concepts, we have defined adaptive dialogs such that they can be defined via [declarative][50] that are interpreted at runtime; which allows us to have tooling on top of this and integrate with services.
 
