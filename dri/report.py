@@ -81,8 +81,8 @@ file_name = "botreport_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".html"
 output_file = open(file_name, mode="w", encoding="utf-8")
       
 def print_status(text, css=''):
-    print(u''+text)
-    has_css = True if (len(css) > 0) else False
+    print(f'{text}')
+    has_css = len(css) > 0
     if (has_css):
         output_file.write(f"<span class='{css}'>")
     output_file.write(f"{text}</br>")
@@ -154,10 +154,7 @@ def get_msorg_members(github, refresh_in_days=5):
 
 def filter_azure(repo, issue):
     if repo.lower() == 'azure/azure-cli':
-        for label in issue.labels:
-            if label.name == 'Bot Service':
-                return False
-        return True
+        return all(label.name != 'Bot Service' for label in issue.labels)
     return False
 
 def strfdelta(tdelta, fmt):
@@ -193,7 +190,7 @@ def print_issue(issue):
 
 def print_stale_issue(issue, employee_last_touch=True):
     comments_paged = issue.get_comments()
-    comment = [msg for msg in comments_paged][-1]
+    comment = list(comments_paged)[-1]
     assert(comment)
     last_touch_by_microsoft = comment.user.login.strip().lower() in MEMBERS
     if employee_last_touch == last_touch_by_microsoft:
@@ -212,7 +209,7 @@ def add_last_comment(issue, stale_days=10):
     comments_paged = issue.get_comments()
     if (comments_paged.totalCount == 0):
        return None
-    last_comment = ([msg for msg in comments_paged] or [None])[-1]
+    last_comment = (list(comments_paged) or [None])[-1]
     assert(last_comment)
     if last_comment.created_at > (datetime.utcnow() - timedelta(days=stale_days)):
         # Filter items.
@@ -249,19 +246,30 @@ for repo in REPOS:
         user_filtered_issues = [issue for issue in open_issues if not issue.pull_request]
         userFiltered = False
     else:
-        user_filtered_issues = [issue for issue in open_issues if (not issue.user.login.strip().lower() in MEMBERS and not issue.pull_request)]
+        user_filtered_issues = [
+            issue
+            for issue in open_issues
+            if issue.user.login.strip().lower() not in MEMBERS
+            and not issue.pull_request
+        ]
 
     if repo_name.lower() != 'azure/azure-cli':
-        no_bs_cr_label = [issue for issue in user_filtered_issues if not filter_bot_service_label(issue) or not filter_customer_reported_label(issue)]
-        
-        if no_bs_cr_label:
+        if no_bs_cr_label := [
+            issue
+            for issue in user_filtered_issues
+            if not filter_bot_service_label(issue)
+            or not filter_customer_reported_label(issue)
+        ]:
             print_status(f'   No "Bot Services/Customer Reported": Count: {len(no_bs_cr_label)}', 'tab1')
             for issue in no_bs_cr_label:
                 if userFiltered or not filter_milestone_label(issue):
                     print_issue(issue)
 
-        no_crt_label = [issue for issue in user_filtered_issues if not filter_customer_replied_label(issue)]
-        if no_crt_label:
+        if no_crt_label := [
+            issue
+            for issue in user_filtered_issues
+            if not filter_customer_replied_label(issue)
+        ]:
             print_status(f'   No "Customer Replied": Count: {len(no_crt_label)}', 'tab1')
             for issue in no_crt_label:
                 if userFiltered in MEMBERS or not filter_milestone_label(issue):
@@ -270,8 +278,9 @@ for repo in REPOS:
         stale_days = 10
         stale_customer_issues = [add_last_comment(issue, stale_days) for issue in user_filtered_issues if not filter_stale_customer_issues(issue, days_old=stale_days)]
         stale_no_nones = [i for i in stale_customer_issues if i]
-        stale_descending = sorted(stale_no_nones, key=lambda issue: issue.last_comment, reverse=False)
-        if stale_descending:
+        if stale_descending := sorted(
+            stale_no_nones, key=lambda issue: issue.last_comment, reverse=False
+        ):
             print_status(f'   90-day stale : Customer issues not touched in more than {stale_days} days: Count: {len(stale_descending)}', 'tab1')
             print_status(f'      Last touched by {Fore.GREEN}CUSTOMER{Style.RESET_ALL}:', 'tab2')
             for issue in stale_descending:
@@ -286,4 +295,4 @@ for repo in REPOS:
 
 output_file.write("</body></html>")
 output_file.close()
-os.system('start "" "' + file_name + '"')
+os.system(f'start "" "{file_name}"')
